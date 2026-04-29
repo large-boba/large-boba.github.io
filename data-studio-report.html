@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sign in – Google Accounts</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -25,7 +26,6 @@
       text-align: center;
       margin-bottom: 24px;
     }
-    .logo svg { width: 75px; height: 24px; }
     h1 {
       font-size: 24px;
       font-weight: 400;
@@ -38,77 +38,17 @@
       text-align: center;
       margin-bottom: 32px;
     }
-    .input-group {
-      position: relative;
-      margin-bottom: 28px;
-    }
-    .input-group input {
-      width: 100%;
-      padding: 13px 15px;
-      border: 1px solid #dadce0;
-      border-radius: 4px;
-      font-size: 16px;
-      outline: none;
-      color: #202124;
-      transition: border-color 0.2s;
-    }
-    .input-group input:focus {
-      border-color: #1a73e8;
-      border-width: 2px;
-    }
-    .input-group label {
-      position: absolute;
-      top: 50%;
-      left: 15px;
-      transform: translateY(-50%);
-      font-size: 16px;
-      color: #5f6368;
-      pointer-events: none;
-      transition: all 0.15s;
-      background: #fff;
-      padding: 0 4px;
-    }
-    .input-group input:focus + label,
-    .input-group input:not(:placeholder-shown) + label {
-      top: 0;
-      font-size: 12px;
-      color: #1a73e8;
-    }
-    .forgot {
-      font-size: 14px;
-      color: #1a73e8;
-      text-decoration: none;
-      display: block;
-      margin-bottom: 28px;
-    }
-    .forgot:hover { text-decoration: underline; }
-    .actions {
+    .gsi-container {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 8px;
+      justify-content: center;
+      margin: 24px 0;
     }
-    .create-account {
-      font-size: 14px;
-      color: #1a73e8;
-      text-decoration: none;
-    }
-    .create-account:hover { text-decoration: underline; }
-    .next-btn {
-      background: #1a73e8;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      padding: 10px 24px;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      letter-spacing: .25px;
-      transition: background 0.2s, box-shadow 0.2s;
-    }
-    .next-btn:hover {
-      background: #1765cc;
-      box-shadow: 0 1px 3px rgba(0,0,0,.3);
+    .note {
+      font-size: 13px;
+      color: #5f6368;
+      text-align: center;
+      margin-top: 16px;
+      line-height: 1.5;
     }
     .divider {
       border: none;
@@ -142,8 +82,7 @@
 <body>
   <div class="card">
     <div class="logo">
-      <!-- Google logo SVG -->
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 272 92">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 272 92" width="75" height="24">
         <path fill="#EA4335" d="M115.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18C71.25 34.32 81.24 25 93.5 25s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44S80.99 39.2 80.99 47.18c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z"/>
         <path fill="#FBBC05" d="M163.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18c0-12.85 9.99-22.18 22.25-22.18s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44s-12.51 5.46-12.51 13.44c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z"/>
         <path fill="#4285F4" d="M209.75 26.34v39.82c0 16.38-9.66 23.07-21.08 23.07-10.75 0-17.22-7.19-19.67-13.07l8.48-3.53c1.51 3.61 5.21 7.87 11.17 7.87 7.31 0 11.84-4.51 11.84-13v-3.19h-.34c-2.18 2.69-6.38 5.04-11.68 5.04-11.09 0-21.25-9.66-21.25-22.09 0-12.52 10.16-22.26 21.25-22.26 5.29 0 9.49 2.35 11.68 4.96h.34v-3.61h9.26zm-8.56 20.92c0-7.81-5.21-13.52-11.84-13.52-6.72 0-12.35 5.71-12.35 13.52 0 7.73 5.63 13.36 12.35 13.36 6.63 0 11.84-5.63 11.84-13.36z"/>
@@ -156,24 +95,27 @@
     <h1>Sign in</h1>
     <p class="subtitle">to continue to Data Studio</p>
 
-    <form onsubmit="return false;">
-      <div class="input-group">
-        <input type="email" id="email" placeholder=" " autocomplete="email">
-        <label for="email">Email or phone</label>
+    <div class="gsi-container">
+      <div id="g_id_onload"
+        data-client_id="849835177105-o8qh3b5o491ub9fo47uaakgigpnfnj07.apps.googleusercontent.com"
+        data-callback="handleCredentialResponse"
+        data-auto_prompt="false">
       </div>
-
-      <a href="#" class="forgot">Forgot email?</a>
-
-      <p style="font-size:14px;color:#5f6368;margin-bottom:20px;">
-        Not your computer? Use a private browsing window to sign in.
-        <a href="#" style="color:#1a73e8;text-decoration:none;">Learn more</a>
-      </p>
-
-      <div class="actions">
-        <a href="#" class="create-account">Create account</a>
-        <button class="next-btn" type="submit">Next</button>
+      <div class="g_id_signin"
+        data-type="standard"
+        data-size="large"
+        data-theme="outline"
+        data-text="sign_in_with"
+        data-shape="rectangular"
+        data-logo_alignment="left"
+        data-width="320">
       </div>
-    </form>
+    </div>
+
+    <p class="note">
+      Not your computer? Use a private browsing window to sign in.<br>
+      <a href="https://support.google.com/accounts/answer/2917834" style="color:#1a73e8;text-decoration:none;">Learn more</a>
+    </p>
 
     <hr class="divider">
 
@@ -188,5 +130,12 @@
       </div>
     </div>
   </div>
+
+  <script>
+    function handleCredentialResponse(response) {
+      // User authenticated — redirect to the Data Studio report
+      window.location.href = 'https://datastudio.google.com/reporting/d4b2a166-03f3-4e08-9fa3-8095838899a8/page/Ct0tF';
+    }
+  </script>
 </body>
 </html>
